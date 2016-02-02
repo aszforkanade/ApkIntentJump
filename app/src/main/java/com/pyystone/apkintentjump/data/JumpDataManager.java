@@ -59,9 +59,9 @@ public class JumpDataManager {
 
     // 处理scheme信息
     private void dealScheme(JSONObject scheme) throws JSONException {
-        int uuid = scheme.optInt("uuid",-1);
-        String schemeName = scheme.optString("schemeName");
-        String schemeDes = scheme.optString("schemeDes");
+        int uuid = scheme.optInt(JumpData.DB_TAG_BASE_UUID,-1);
+        String schemeName = scheme.optString(JumpScheme.DB_TAG_SCHEME_SCHEME);
+        String schemeDes = scheme.optString(JumpScheme.DB_TAG_SCHEME_SCHEMEDES);
         JSONArray hosts = scheme.optJSONArray("hosts");
         int length = hosts.length();
         if (uuid != 0) {
@@ -76,12 +76,35 @@ public class JumpDataManager {
     }
 
     // 处理host信息
-    private void dealHost(JSONObject host) {
-
+    private void dealHost(JSONObject object) throws JSONException {
+        int uuid = object.optInt(JumpData.DB_TAG_BASE_UUID,-1);
+        int parentId = object.optInt(JumpHost.DB_TAG_HOST_PARENTID);
+        String host = object.optString(JumpHost.DB_TAG_HOST_HOST);
+        String hostDes = object.optString(JumpHost.DB_TAG_HOST_HOSTDES);
+        JSONArray params = object.optJSONArray("params");
+        int length = params.length();
+        if (uuid != 0) {
+            return;
+        }
+        for (int i = 0 ; i < length ; i ++) {
+            dealParams((JSONObject) params.get(i));
+        }
+        JumpHost jumpHost = new JumpHost(0,uuid,parentId,host,hostDes,null);
+        jumpHost.save();
     }
 
     // 处理params信息
-    private void dealParams(JSONArray params) {
+    private void dealParams(JSONObject object) {
+        int uuid = object.optInt(JumpData.DB_TAG_BASE_UUID,-1);
+        int soureceId = object.optInt(JumpParam.DB_TAG_PARAM_SOURCEID);
+        String key = object.optString(JumpParam.DB_TAG_PARAM_KEY);
+        String keyDes = object.optString(JumpParam.DB_TAG_PARAM_KEYDES);
+        String defaultValue = object.optString(JumpParam.DB_TAG_PARAM_DEFAULT_VALUE);
+        if (uuid != 0) {
+            return;
+        }
+        JumpParam jumpParam = new JumpParam(0,uuid,key,defaultValue,keyDes,soureceId);
+        jumpParam.save();
 
     }
 
