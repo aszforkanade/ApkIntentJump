@@ -1,5 +1,6 @@
 package com.pyystone.apkintentjump.data;
 
+import android.app.Activity;
 import android.database.Cursor;
 
 import com.pyystone.apkintentjump.DBManager;
@@ -25,7 +26,6 @@ public class JumpDataManager {
         }
     }
     private void loadData() {
-        updateData("");
         LoadData();
     }
 
@@ -34,7 +34,7 @@ public class JumpDataManager {
     }
 
     // 数据装载刷新
-    private void updateData(String jsonStr) {
+    public void updateData(String jsonStr) {
         try {
             JSONObject object = new JSONObject(jsonStr);
             if (object.optInt("code",-1) != 0) {
@@ -144,4 +144,20 @@ public class JumpDataManager {
         }
     }
 
+    public static JumpDataManager getInstance() {
+        return mInstance;
+    }
+
+    public ArrayList<JumpScheme> getSchemes() {
+        return mSchemes;
+    }
+
+    // 用于请求数据并刷新
+    public void refreshData(Activity activity , refreshCallBack callBack) {
+
+    }
+
+    public interface refreshCallBack {
+        void finish(boolean isSucceed);
+    }
 }
