@@ -85,8 +85,8 @@ public class JumpHost extends JumpData{
         builder.append(uuid).append(",")
                 .append(isDelete).append(",")
                 .append(parentId).append(",")
-                .append(host).append(",")
-                .append(hostDes).append(")");
+                .append("'").append(host).append("',")
+                .append("'").append(hostDes).append("')");
 
         DBManager.getInstance().execSql(builder.toString());
 

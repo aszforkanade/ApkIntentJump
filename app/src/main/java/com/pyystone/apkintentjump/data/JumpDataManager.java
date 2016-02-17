@@ -17,6 +17,9 @@ import java.util.ArrayList;
  * QQ: 862429936
  */
 public class JumpDataManager {
+    public static final String JSON_TAG_SCHEME = "schemes";
+    public static final String JSON_TAG_HOST = "hosts";
+    public static final String JSON_TAG_PARAM = "params";
     private static JumpDataManager mInstance;
     private ArrayList<JumpScheme> mSchemes;
     public static void init() {
@@ -41,7 +44,7 @@ public class JumpDataManager {
                 return;
             }
             JSONObject data = object.optJSONObject("data");
-            JSONArray schemes = data.optJSONArray("schemes");
+            JSONArray schemes = data.optJSONArray(JSON_TAG_SCHEME);
 
             // 如果不需要刷新就直接返回
             if (!needUpdateData(data)) {
@@ -69,7 +72,7 @@ public class JumpDataManager {
         int uuid = scheme.optInt(JumpData.DB_TAG_BASE_UUID,-1);
         String schemeName = scheme.optString(JumpScheme.DB_TAG_SCHEME_SCHEME);
         String schemeDes = scheme.optString(JumpScheme.DB_TAG_SCHEME_SCHEMEDES);
-        JSONArray hosts = scheme.optJSONArray("hosts");
+        JSONArray hosts = scheme.optJSONArray(JSON_TAG_HOST);
         int length = hosts.length();
         if (uuid != 0) {
             return;
@@ -91,7 +94,7 @@ public class JumpDataManager {
         int parentId = object.optInt(JumpHost.DB_TAG_HOST_PARENTID);
         String host = object.optString(JumpHost.DB_TAG_HOST_HOST);
         String hostDes = object.optString(JumpHost.DB_TAG_HOST_HOSTDES);
-        JSONArray params = object.optJSONArray("params");
+        JSONArray params = object.optJSONArray(JSON_TAG_PARAM);
         int length = params.length();
         if (uuid != 0) {
             return;

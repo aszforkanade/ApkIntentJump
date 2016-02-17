@@ -79,9 +79,9 @@ public class JumpParam extends JumpData {
         }
         builder.append(uuid).append(",")
                 .append(isDelete).append(",")
-                .append(key).append(",")
-                .append(defaultValue).append(",")
-                .append(keyDes).append("，")
+                .append("'").append(key).append("',")
+                .append("'").append(defaultValue).append("',")
+                .append("'").append(keyDes).append("',")
                 .append(sourceId).append(")");
 
         DBManager.getInstance().execSql(builder.toString());

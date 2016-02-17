@@ -66,8 +66,8 @@ public class JumpScheme extends JumpData {
         }
         builder.append(uuid).append(",")
                 .append(isDelete).append(",")
-                .append(scheme).append(",")
-                .append(schemeDes).append(")");
+                .append("'").append(scheme).append("',")
+                .append("'").append(schemeDes).append("')");
 
         DBManager.getInstance().execSql(builder.toString());
     }
