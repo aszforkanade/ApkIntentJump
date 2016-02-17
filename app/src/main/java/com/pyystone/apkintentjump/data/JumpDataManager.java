@@ -26,6 +26,11 @@ public class JumpDataManager {
     }
     private void loadData() {
         updateData("");
+        LoadData();
+    }
+
+    private void LoadData() {
+
     }
 
     // 数据装载刷新

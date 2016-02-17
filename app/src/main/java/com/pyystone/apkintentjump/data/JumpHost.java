@@ -1,5 +1,7 @@
 package com.pyystone.apkintentjump.data;
 
+import android.database.Cursor;
+
 import com.pyystone.apkintentjump.DBManager;
 
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ public class JumpHost extends JumpData{
     public String hostDes;
     public ArrayList<JumpParam> params;
 
+    public JumpHost(){}
     public JumpHost(int id, int uuid, int parentId, String host, String hostDes, ArrayList<JumpParam> params) {
         this.id = id;
         this.uuid = uuid;
@@ -52,5 +55,47 @@ public class JumpHost extends JumpData{
 
         DBManager.getInstance().execSql(builder.toString());
 
+    }
+
+    public static JumpHost load(int id) {
+        JumpHost host = new JumpHost();
+        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_HOST + " where id = " + id);
+        try {
+            if (c == null || !c.moveToFirst()) {
+                return null;
+            }
+            host.id = c.getInt(c.getColumnIndex(DB_TAG_BASE_ID));
+            host.uuid = c.getInt(c.getColumnIndex(DB_TAG_BASE_UUID));
+            host.host = c.getString(c.getColumnIndex(DB_TAG_HOST_HOST));
+            host.hostDes = c.getString(c.getColumnIndex(DB_TAG_HOST_HOSTDES));
+            host.parentId = c.getInt(c.getColumnIndex(DB_TAG_HOST_PARENTID));
+            host.params = loadParam(host.uuid);
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return host;
+    }
+
+    public static ArrayList<JumpParam> loadParam(int hostUuid) {
+        ArrayList<JumpParam> params = new ArrayList<>();
+        Cursor c = DBManager.getInstance().rawQuery(
+                "select * from " + JumpHost.DB_TBL_HOST + " where " + JumpHost.DB_TAG_HOST_PARENTID + " = " + hostUuid);
+        try {
+            if (c == null || !c.moveToFirst()) {
+                return null;
+            }
+            int idIndex = c.getColumnIndex(DB_TAG_BASE_ID);
+            do {
+                params.add(JumpParam.load(c.getInt(idIndex)));
+            } while (c.moveToNext());
+
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return params;
     }
 }

@@ -1,5 +1,7 @@
 package com.pyystone.apkintentjump.data;
 
+import android.database.Cursor;
+
 import com.pyystone.apkintentjump.DBManager;
 
 /**
@@ -18,6 +20,7 @@ public class JumpParam extends JumpData {
     public String keyDes;
     public int sourceId;
 
+    public JumpParam(){}
     public JumpParam(int id, int uuid, String key, String defaultValue, String keyDes,int sourceId) {
         this.id = id;
         this.uuid = uuid;
@@ -53,5 +56,26 @@ public class JumpParam extends JumpData {
                 .append(sourceId).append(")");
 
         DBManager.getInstance().execSql(builder.toString());
+    }
+
+    public static JumpParam load(int id) {
+        JumpParam param = new JumpParam();
+        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_PARAM + " where id = " + id);
+        try {
+            if (c == null || !c.moveToFirst()) {
+                return null;
+            }
+            param.id = c.getInt(c.getColumnIndex(DB_TAG_BASE_ID));
+            param.uuid = c.getInt(c.getColumnIndex(DB_TAG_BASE_UUID));
+            param.key = c.getString(c.getColumnIndex(DB_TAG_PARAM_KEY));
+            param.defaultValue = c.getString(c.getColumnIndex(DB_TAG_PARAM_DEFAULT_VALUE));
+            param.keyDes = c.getString(c.getColumnIndex(DB_TAG_PARAM_KEYDES));
+            param.sourceId = c.getInt(c.getColumnIndex(DB_TAG_PARAM_SOURCEID));
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return param;
     }
 }
