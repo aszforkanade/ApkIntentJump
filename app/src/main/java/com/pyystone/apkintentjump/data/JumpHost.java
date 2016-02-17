@@ -30,6 +30,39 @@ public class JumpHost extends JumpData{
         this.hostDes = hostDes;
         this.params = params;
     }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getHostDes() {
+        return hostDes;
+    }
+
+    public void setHostDes(String hostDes) {
+        this.hostDes = hostDes;
+    }
+
+    public ArrayList<JumpParam> getParams() {
+        return params;
+    }
+
+    public void setParams(ArrayList<JumpParam> params) {
+        this.params = params;
+    }
+
     public void save() {
         int id = JumpDataManager.getSchemeIdByUuid(uuid,DB_TBL_HOST);
         StringBuilder builder = new StringBuilder();
@@ -39,6 +72,7 @@ public class JumpHost extends JumpData{
             builder.append(DB_TAG_BASE_ID).append(",");
         }
         builder.append(DB_TAG_BASE_UUID).append(",")
+                .append(DB_TAG_BASE_ISDELETE).append(",")
                 .append(DB_TAG_HOST_PARENTID).append(",")
                 .append(DB_TAG_HOST_HOST).append(",")
                 .append(DB_TAG_HOST_HOSTDES).append(")");
@@ -49,6 +83,7 @@ public class JumpHost extends JumpData{
             builder.append(id).append(",");
         }
         builder.append(uuid).append(",")
+                .append(isDelete).append(",")
                 .append(parentId).append(",")
                 .append(host).append(",")
                 .append(hostDes).append(")");
@@ -59,7 +94,8 @@ public class JumpHost extends JumpData{
 
     public static JumpHost load(int id) {
         JumpHost host = new JumpHost();
-        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_HOST + " where id = " + id);
+        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_HOST
+                + " where id = " + id + " and "  + DB_TAG_BASE_ISDELETE + " = 0");
         try {
             if (c == null || !c.moveToFirst()) {
                 return null;
@@ -69,7 +105,7 @@ public class JumpHost extends JumpData{
             host.host = c.getString(c.getColumnIndex(DB_TAG_HOST_HOST));
             host.hostDes = c.getString(c.getColumnIndex(DB_TAG_HOST_HOSTDES));
             host.parentId = c.getInt(c.getColumnIndex(DB_TAG_HOST_PARENTID));
-            host.params = loadParam(host.uuid);
+            host.params = JumpParam.loadParamByHostUuid(host.uuid);
         } finally {
             if (c != null) {
                 c.close();
@@ -78,24 +114,26 @@ public class JumpHost extends JumpData{
         return host;
     }
 
-    public static ArrayList<JumpParam> loadParam(int hostUuid) {
-        ArrayList<JumpParam> params = new ArrayList<>();
+    public static ArrayList<JumpHost> loadHostBySchemeUuid(int schemeUuid) {
+        ArrayList<JumpHost> hosts = new ArrayList<>();
         Cursor c = DBManager.getInstance().rawQuery(
-                "select * from " + JumpHost.DB_TBL_HOST + " where " + JumpHost.DB_TAG_HOST_PARENTID + " = " + hostUuid);
+                "select * from " + DB_TBL_HOST
+                        + " where " + DB_TAG_HOST_PARENTID + " = " + schemeUuid + " and "  + DB_TAG_BASE_ISDELETE + " = 0");
         try {
             if (c == null || !c.moveToFirst()) {
                 return null;
             }
             int idIndex = c.getColumnIndex(DB_TAG_BASE_ID);
             do {
-                params.add(JumpParam.load(c.getInt(idIndex)));
+                int id = c.getInt(idIndex);
+                hosts.add(load(id));
             } while (c.moveToNext());
-
         } finally {
             if (c != null) {
                 c.close();
             }
         }
-        return params;
+        return  hosts;
     }
+
 }

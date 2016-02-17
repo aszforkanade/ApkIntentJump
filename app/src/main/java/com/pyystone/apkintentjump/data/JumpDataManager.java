@@ -30,7 +30,7 @@ public class JumpDataManager {
     }
 
     private void LoadData() {
-
+        mSchemes = JumpScheme.loadAllScheme();
     }
 
     // 数据装载刷新
@@ -43,9 +43,11 @@ public class JumpDataManager {
             JSONObject data = object.optJSONObject("data");
             JSONArray schemes = data.optJSONArray("schemes");
 
+            // 如果不需要刷新就直接返回
             if (!needUpdateData(data)) {
                 return;
             }
+            // 如果scheme的长度为0也就直接返回
             if (schemes.length() == 0) {
                 return;
             }
@@ -75,7 +77,10 @@ public class JumpDataManager {
         for (int i = 0 ; i < length ; i ++) {
             dealHost((JSONObject) hosts.get(i));
         }
-        JumpScheme jumpScheme = new JumpScheme(0 , uuid, schemeName, schemeDes, null);
+        JumpScheme jumpScheme = new JumpScheme();
+        jumpScheme.setUuid(uuid);
+        jumpScheme.setScheme(schemeName);
+        jumpScheme.setSchemeDes(schemeDes);
         jumpScheme.save();
 
     }
@@ -94,7 +99,11 @@ public class JumpDataManager {
         for (int i = 0 ; i < length ; i ++) {
             dealParams((JSONObject) params.get(i));
         }
-        JumpHost jumpHost = new JumpHost(0,uuid,parentId,host,hostDes,null);
+        JumpHost jumpHost = new JumpHost();
+        jumpHost.setUuid(uuid);
+        jumpHost.setParentId(parentId);
+        jumpHost.setHost(host);
+        jumpHost.setHostDes(hostDes);
         jumpHost.save();
     }
 
@@ -108,7 +117,12 @@ public class JumpDataManager {
         if (uuid != 0) {
             return;
         }
-        JumpParam jumpParam = new JumpParam(0,uuid,key,defaultValue,keyDes,soureceId);
+        JumpParam jumpParam = new JumpParam();
+        jumpParam.setUuid(uuid);
+        jumpParam.setKey(key);
+        jumpParam.setDefaultValue(defaultValue);
+        jumpParam.setKeyDes(keyDes);
+        jumpParam.setSourceId(soureceId);
         jumpParam.save();
 
     }

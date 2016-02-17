@@ -21,13 +21,31 @@ public class JumpScheme extends JumpData {
     public String schemeDes;
     public ArrayList<JumpHost> hosts;
     public JumpScheme(){}
-    public JumpScheme(int id, int uuid, String scheme, String schemeDes, ArrayList<JumpHost> hosts) {
-        this.id = id;
-        this.uuid = uuid;
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
         this.scheme = scheme;
+    }
+
+    public String getSchemeDes() {
+        return schemeDes;
+    }
+
+    public void setSchemeDes(String schemeDes) {
         this.schemeDes = schemeDes;
+    }
+
+    public ArrayList<JumpHost> getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(ArrayList<JumpHost> hosts) {
         this.hosts = hosts;
     }
+
     public void save() {
         int id = JumpDataManager.getSchemeIdByUuid(uuid,DB_TBL_SCHEME);
         StringBuilder builder = new StringBuilder();
@@ -37,6 +55,7 @@ public class JumpScheme extends JumpData {
             builder.append(DB_TAG_BASE_ID).append(",");
         }
         builder.append(DB_TAG_BASE_UUID).append(",")
+                .append(DB_TAG_BASE_ISDELETE).append(",")
                 .append(DB_TAG_SCHEME_SCHEME).append(",")
                 .append(DB_TAG_SCHEME_SCHEMEDES).append(")");
 
@@ -46,6 +65,7 @@ public class JumpScheme extends JumpData {
             builder.append(id).append(",");
         }
         builder.append(uuid).append(",")
+                .append(isDelete).append(",")
                 .append(scheme).append(",")
                 .append(schemeDes).append(")");
 
@@ -55,7 +75,8 @@ public class JumpScheme extends JumpData {
     public static JumpScheme load(int id) {
 
         JumpScheme scheme = new JumpScheme();
-        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_SCHEME + " where "+DB_TAG_BASE_ID+" = " + id);
+        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_SCHEME
+                + " where "+DB_TAG_BASE_ID+" = " + id + " and "  + DB_TAG_BASE_ISDELETE + " = 0");
         try {
             if (c == null || !c.moveToFirst()) {
                 return null;
@@ -63,7 +84,7 @@ public class JumpScheme extends JumpData {
             scheme.uuid = c.getInt(c.getColumnIndex(DB_TAG_BASE_UUID));
             scheme.scheme = c.getString(c.getColumnIndex(DB_TAG_SCHEME_SCHEME));
             scheme.schemeDes = c.getString(c.getColumnIndex(DB_TAG_SCHEME_SCHEMEDES));
-            scheme.hosts = loadHost(scheme.uuid);
+            scheme.hosts = JumpHost.loadHostBySchemeUuid(scheme.uuid);
         } finally {
             if (c != null) {
                 c.close();
@@ -72,24 +93,22 @@ public class JumpScheme extends JumpData {
         return scheme;
     }
 
-    public static ArrayList<JumpHost> loadHost(int schemeUuid) {
-        ArrayList<JumpHost> hosts = new ArrayList<>();
-        Cursor c = DBManager.getInstance().rawQuery(
-                "select * from " + JumpHost.DB_TBL_HOST + " where " + JumpHost.DB_TAG_HOST_PARENTID + " = " + schemeUuid);
+    public static ArrayList<JumpScheme> loadAllScheme() {
+        ArrayList<JumpScheme> schemes = new ArrayList<>();
+        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_SCHEME + " where " + DB_TAG_BASE_ISDELETE + " = 0");
         try {
             if (c == null || !c.moveToFirst()) {
                 return null;
             }
             int idIndex = c.getColumnIndex(DB_TAG_BASE_ID);
             do {
-                int id = c.getInt(idIndex);
-                hosts.add(JumpHost.load(id));
+                schemes.add(load(c.getInt(idIndex)));
             } while (c.moveToNext());
         } finally {
             if (c != null) {
                 c.close();
             }
         }
-        return  hosts;
+        return schemes;
     }
 }

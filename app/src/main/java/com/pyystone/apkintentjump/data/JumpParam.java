@@ -4,6 +4,8 @@ import android.database.Cursor;
 
 import com.pyystone.apkintentjump.DBManager;
 
+import java.util.ArrayList;
+
 /**
  * Created by pyysotne on 2016/2/2.
  * email: pyystone@163.com
@@ -21,14 +23,39 @@ public class JumpParam extends JumpData {
     public int sourceId;
 
     public JumpParam(){}
-    public JumpParam(int id, int uuid, String key, String defaultValue, String keyDes,int sourceId) {
-        this.id = id;
-        this.uuid = uuid;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public String getKeyDes() {
+        return keyDes;
+    }
+
+    public void setKeyDes(String keyDes) {
         this.keyDes = keyDes;
+    }
+
+    public int getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(int sourceId) {
         this.sourceId = sourceId;
     }
+
     public void save() {
 
         int id = JumpDataManager.getSchemeIdByUuid(uuid,"tbl_scheme");
@@ -39,6 +66,7 @@ public class JumpParam extends JumpData {
             builder.append(DB_TAG_BASE_ID).append(",");
         }
         builder.append(DB_TAG_BASE_UUID).append(",")
+                .append(DB_TAG_BASE_ISDELETE).append(",")
                 .append(DB_TAG_PARAM_KEY).append(",")
                 .append(DB_TAG_PARAM_DEFAULT_VALUE).append(",")
                 .append(DB_TAG_PARAM_KEYDES).append(",")
@@ -50,6 +78,7 @@ public class JumpParam extends JumpData {
             builder.append(id).append(",");
         }
         builder.append(uuid).append(",")
+                .append(isDelete).append(",")
                 .append(key).append(",")
                 .append(defaultValue).append(",")
                 .append(keyDes).append("，")
@@ -60,7 +89,8 @@ public class JumpParam extends JumpData {
 
     public static JumpParam load(int id) {
         JumpParam param = new JumpParam();
-        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_PARAM + " where id = " + id);
+        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_PARAM
+                + " where id = " + id + " and "  + DB_TAG_BASE_ISDELETE + " = 0");
         try {
             if (c == null || !c.moveToFirst()) {
                 return null;
@@ -78,4 +108,27 @@ public class JumpParam extends JumpData {
         }
         return param;
     }
+
+    public static ArrayList<JumpParam> loadParamByHostUuid(int hostUuid) {
+        ArrayList<JumpParam> params = new ArrayList<>();
+        Cursor c = DBManager.getInstance().rawQuery(
+                "select * from " + JumpHost.DB_TBL_HOST
+                        + " where " + JumpHost.DB_TAG_HOST_PARENTID + " = " + hostUuid + " and "  + DB_TAG_BASE_ISDELETE + " = 0");
+        try {
+            if (c == null || !c.moveToFirst()) {
+                return null;
+            }
+            int idIndex = c.getColumnIndex(DB_TAG_BASE_ID);
+            do {
+                params.add(load(c.getInt(idIndex)));
+            } while (c.moveToNext());
+
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        return params;
+    }
+
 }
