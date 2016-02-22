@@ -1,12 +1,16 @@
 package com.pyystone.apkintentjump.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.pyystone.apkintentjump.MyApp;
 import com.pyystone.apkintentjump.R;
 import com.pyystone.apkintentjump.data.JumpData;
 import com.pyystone.apkintentjump.data.JumpDataManager;
@@ -17,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ListView mListView;
     private SchemeListAdapter mAdapter;
+    private Toast mToast;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +58,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         JumpScheme scheme = (JumpScheme) mAdapter.getItem(position);
-        Intent intent = new Intent(this,SchemeActivity.class);
-        startActivity(intent);
+        if (isVaildScheme(scheme)) {
+            Intent intent = new Intent(this,SchemeActivity.class);
+            intent.putExtra(SchemeActivity.EXTRA_SCHEME_UUID,scheme.getUuid());
+            startActivity(intent);
+        } else {
+            if (mToast == null) {
+                mToast = Toast.makeText(this,getString(R.string.ivaildSchemeError),Toast.LENGTH_SHORT);
+            }
+            mToast.cancel();
+            mToast.show();
+        }
+    }
+
+    private boolean isVaildScheme(JumpScheme scheme) {
+//        Uri uri = Uri.parse(scheme.getScheme() + "://test");
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+//        intent.addCategory(Intent.CATEGORY_DEFAULT);
+//        intent.setData(uri);
+//        return getPackageManager().queryIntentActivities(intent, PackageManager.GET_INTENT_FILTERS).size() > 0;
+        return true;
     }
 }

@@ -17,10 +17,10 @@ public class JumpParam extends JumpData {
     public static final String DB_TAG_PARAM_DEFAULT_VALUE = "defaultvalue";
     public static final String DB_TAG_PARAM_KEYDES = "keydes";
     public static final String DB_TAG_PARAM_SOURCEID = "sourceid";
-    public String key;
-    public String defaultValue;
-    public String keyDes;
-    public int sourceId;
+    private String key;
+    private String defaultValue;
+    private String keyDes;
+    private int sourceId;
 
     public JumpParam(){}
 

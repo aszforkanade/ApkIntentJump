@@ -17,9 +17,9 @@ public class JumpScheme extends JumpData {
     public static final String DB_TAG_SCHEME_SCHEME = "scheme";
     public static final String DB_TAG_SCHEME_SCHEMEDES = "schemedes";
 
-    public String scheme;
-    public String schemeDes;
-    public ArrayList<JumpHost> hosts;
+    private String scheme;
+    private String schemeDes;
+    private ArrayList<JumpHost> hosts;
     public JumpScheme(){}
 
     public String getScheme() {

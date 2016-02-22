@@ -16,10 +16,10 @@ public class JumpHost extends JumpData{
     public static final String DB_TAG_HOST_PARENTID = "parentid";
     public static final String DB_TAG_HOST_HOST = "host";
     public static final String DB_TAG_HOST_HOSTDES = "hostdes";
-    public int parentId;
-    public String host;
-    public String hostDes;
-    public ArrayList<JumpParam> params;
+    private int parentId;
+    private String host;
+    private String hostDes;
+    private ArrayList<JumpParam> params;
 
     public JumpHost(){}
     public JumpHost(int id, int uuid, int parentId, String host, String hostDes, ArrayList<JumpParam> params) {

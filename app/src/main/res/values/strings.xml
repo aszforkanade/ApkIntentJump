@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ApkIntentJump</string>
+    <string name="ivaildSchemeError">这个scheme没有任何App处理他</string>
 </resources>
