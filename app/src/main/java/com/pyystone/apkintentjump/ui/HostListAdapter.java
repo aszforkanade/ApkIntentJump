@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.pyystone.apkintentjump.R;
-import com.pyystone.apkintentjump.activity.SchemeActivity;
 import com.pyystone.apkintentjump.data.JumpHost;
 import com.pyystone.apkintentjump.data.JumpScheme;
 
@@ -63,4 +62,5 @@ public class HostListAdapter extends BaseAdapter {
         tv.setText(scheme.getHostDes());
         return convertView;
     }
+
 }

@@ -13,17 +13,17 @@ import com.pyystone.apkintentjump.data.JumpScheme;
 import com.pyystone.apkintentjump.ui.HostListAdapter;
 
 public class SchemeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-    public static final String EXTRA_SCHEME_UUID = "extra_scheme_uuid";
+    public static final String EXTRA_SCHEME_ID = "extra_scheme_uuid";
 
-    private int mSchemeUuid;
+    private int mSchemeid;
     private ListView mListView;
     private HostListAdapter mHostListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scheme);
-        mSchemeUuid = getIntent().getIntExtra(EXTRA_SCHEME_UUID,-1);
-        if (mSchemeUuid == -1) {
+        mSchemeid = getIntent().getIntExtra(EXTRA_SCHEME_ID,-1);
+        if (mSchemeid == -1) {
             finish();
             return;
         }
@@ -31,7 +31,7 @@ public class SchemeActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void initUI() {
-        JumpScheme scheme = JumpScheme.load(mSchemeUuid);
+        JumpScheme scheme = JumpScheme.load(mSchemeid);
         mListView = (ListView) findViewById(R.id.listView);
         mHostListAdapter = new HostListAdapter(this,scheme);
         mListView.setAdapter(mHostListAdapter);
@@ -46,7 +46,7 @@ public class SchemeActivity extends AppCompatActivity implements AdapterView.OnI
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         JumpHost host = (JumpHost) mHostListAdapter.getItem(position);
         Intent intent = new Intent(this,HostActivity.class);
-        intent.putExtra(HostActivity.EXTRA_HOST_UUID,host.getUuid());
+        intent.putExtra(HostActivity.EXTRA_HOST_ID,host.getId());
         startActivity(intent);
     }
 }
