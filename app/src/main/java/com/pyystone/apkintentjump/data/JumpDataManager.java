@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.database.Cursor;
 
 import com.pyystone.apkintentjump.DBManager;
+import com.pyystone.apkintentjump.http.HttpManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,11 +26,8 @@ public class JumpDataManager {
     public static void init() {
         if (mInstance == null) {
             mInstance = new JumpDataManager();
-            mInstance.loadData();
+            mInstance.LoadData();
         }
-    }
-    private void loadData() {
-        LoadData();
     }
 
     private void LoadData() {
@@ -45,6 +43,8 @@ public class JumpDataManager {
             }
             JSONObject data = object.optJSONObject("data");
             JSONArray schemes = data.optJSONArray(JSON_TAG_SCHEME);
+            JSONArray hosts = data.optJSONArray(JSON_TAG_HOST);
+            JSONArray params = data.optJSONArray(JSON_TAG_PARAM);
 
             // 如果不需要刷新就直接返回
             if (!needUpdateData(data)) {
@@ -58,6 +58,15 @@ public class JumpDataManager {
             for (int i = 0 ; i < length ; i ++) {
                 dealScheme((JSONObject) schemes.get(i));
             }
+            length = hosts.length();
+            for (int i = 0 ; i < length ; i ++) {
+                dealHost((JSONObject) hosts.get(i));
+            }
+            length = params.length();
+            for (int i = 0 ; i < length ; i ++) {
+                dealParams((JSONObject) params.get(i));
+            }
+            mInstance.LoadData();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -72,14 +81,6 @@ public class JumpDataManager {
         int uuid = scheme.optInt(JumpData.DB_TAG_BASE_UUID,-1);
         String schemeName = scheme.optString(JumpScheme.DB_TAG_SCHEME_SCHEME);
         String schemeDes = scheme.optString(JumpScheme.DB_TAG_SCHEME_SCHEMEDES);
-        JSONArray hosts = scheme.optJSONArray(JSON_TAG_HOST);
-        int length = hosts.length();
-        if (uuid != 0) {
-            return;
-        }
-        for (int i = 0 ; i < length ; i ++) {
-            dealHost((JSONObject) hosts.get(i));
-        }
         JumpScheme jumpScheme = new JumpScheme();
         jumpScheme.setUuid(uuid);
         jumpScheme.setScheme(schemeName);
@@ -94,14 +95,6 @@ public class JumpDataManager {
         int parentId = object.optInt(JumpHost.DB_TAG_HOST_PARENTID);
         String host = object.optString(JumpHost.DB_TAG_HOST_HOST);
         String hostDes = object.optString(JumpHost.DB_TAG_HOST_HOSTDES);
-        JSONArray params = object.optJSONArray(JSON_TAG_PARAM);
-        int length = params.length();
-        if (uuid != 0) {
-            return;
-        }
-        for (int i = 0 ; i < length ; i ++) {
-            dealParams((JSONObject) params.get(i));
-        }
         JumpHost jumpHost = new JumpHost();
         jumpHost.setUuid(uuid);
         jumpHost.setParentId(parentId);
@@ -117,9 +110,6 @@ public class JumpDataManager {
         String key = object.optString(JumpParam.DB_TAG_PARAM_KEY);
         String keyDes = object.optString(JumpParam.DB_TAG_PARAM_KEYDES);
         String defaultValue = object.optString(JumpParam.DB_TAG_PARAM_DEFAULT_VALUE);
-        if (uuid != 0) {
-            return;
-        }
         JumpParam jumpParam = new JumpParam();
         jumpParam.setUuid(uuid);
         jumpParam.setKey(key);
@@ -156,8 +146,23 @@ public class JumpDataManager {
     }
 
     // 用于请求数据并刷新
-    public void refreshData(Activity activity , refreshCallBack callBack) {
-
+    public void refreshData(Activity activity , final refreshCallBack callBack) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpManager.httpGet("http://192.168.2.93:8000/wacai/zmltest/jumpIntent", new HttpManager.HttpCallBack() {
+                    @Override
+                    public void HttpResult(int resultCode, String response) {
+                        if (resultCode == 200) {
+                            updateData(response);
+                            callBack.finish(true);
+                        } else {
+                            callBack.finish(false);
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     public interface refreshCallBack {

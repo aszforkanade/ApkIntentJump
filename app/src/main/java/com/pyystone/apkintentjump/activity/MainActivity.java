@@ -23,13 +23,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        initData();
         initUI();
+    }
+
+    private void initData() {
+        mAdapter = new SchemeListAdapter(this,JumpDataManager.getInstance().getSchemes());
     }
 
     private void initUI() {
         mListView = (ListView) findViewById(R.id.listView);
-        mAdapter = new SchemeListAdapter(this,JumpDataManager.getInstance().getSchemes());
         mListView.setAdapter(mAdapter);
         initListener();
     }
@@ -45,11 +48,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.btnUpdate) {
             JumpDataManager.getInstance().refreshData(this, new JumpDataManager.refreshCallBack() {
                 @Override
-                public void finish(boolean isSucceed) {
-
+                public void finish(final boolean isSucceed) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isSucceed) {
+                                mAdapter = new SchemeListAdapter(MainActivity.this, JumpDataManager.getInstance().getSchemes());
+                                mListView.setAdapter(mAdapter);
+                            }
+                            showToast(isSucceed? "update succeed":"update failure");
+                        }
+                    });
                 }
             });
         }
+    }
+
+    private void showToast(String message) {
+        if (mToast == null) {
+            mToast = Toast.makeText(this,message,Toast.LENGTH_SHORT);
+        } else {
+            mToast.setText(message);
+        }
+        mToast.show();
     }
 
     @Override
@@ -60,10 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra(SchemeActivity.EXTRA_SCHEME_ID,scheme.getUuid());
             startActivity(intent);
         } else {
-            if (mToast == null) {
-                mToast = Toast.makeText(this,getString(R.string.ivaildSchemeError),Toast.LENGTH_SHORT);
-            }
-            mToast.show();
+            showToast(getString(R.string.ivaildSchemeError));
         }
     }
 

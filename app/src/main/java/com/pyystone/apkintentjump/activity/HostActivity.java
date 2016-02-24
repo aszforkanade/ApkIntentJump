@@ -1,9 +1,7 @@
 package com.pyystone.apkintentjump.activity;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
@@ -13,7 +11,6 @@ import com.pyystone.apkintentjump.JumpTools;
 import com.pyystone.apkintentjump.R;
 import com.pyystone.apkintentjump.data.JumpHost;
 import com.pyystone.apkintentjump.data.JumpScheme;
-import com.pyystone.apkintentjump.ui.HostListAdapter;
 import com.pyystone.apkintentjump.ui.ParamListAdapter;
 
 /**
@@ -54,9 +51,9 @@ public class HostActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initUI() {
         ListView listView = (ListView) findViewById(R.id.listView);
+        mTvUrl = (TextView) findViewById(R.id.tvUrl);
         ParamListAdapter paramListAdapter = new ParamListAdapter(this, mJumpHost, this);
         listView.setAdapter(paramListAdapter);
-        mTvUrl = (TextView) findViewById(R.id.tvUrl);
         initListener();
     }
 
@@ -74,6 +71,10 @@ public class HostActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onValueChange(String url) {
-        mTvUrl.setText(String.format("%s?%s",mBaseUrl,url));
+        if (TextUtils.isEmpty(url)) {
+            mTvUrl.setText(mBaseUrl);
+        } else {
+            mTvUrl.setText(String.format("%s?%s", mBaseUrl, url));
+        }
     }
 }

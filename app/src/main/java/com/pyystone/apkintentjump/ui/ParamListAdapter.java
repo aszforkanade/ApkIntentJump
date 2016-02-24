@@ -41,6 +41,7 @@ public class ParamListAdapter extends BaseAdapter {
         for (JumpParam jumpParam : mJumpParams) {
             mValues.put(jumpParam.getKey(),jumpParam.getDefaultValue());
         }
+        mUrlChangeListener.onValueChange(getParamUrl());
     }
 
     @Override
