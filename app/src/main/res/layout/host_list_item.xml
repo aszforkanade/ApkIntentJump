@@ -7,7 +7,9 @@
         android:id="@+id/llHostName"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
         <TextView
             android:text="name:"
@@ -22,7 +24,8 @@
         android:id="@+id/llHostDes"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp">
 
         <TextView
             android:text="description:"
