@@ -68,6 +68,7 @@ public class ParamListAdapter extends BaseAdapter {
         return position;
     }
 
+    // TODO: 2016/2/26 这里的converView 没有复用 因为 et的 addTextChangedListener 会导致多个监听，又不能针对去去除，需要好好考量一下解决办法
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = mLayoutInflater.inflate(R.layout.param_list_item,null);
