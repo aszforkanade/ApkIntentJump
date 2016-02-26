@@ -13,6 +13,7 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        AppTools.init(this);
         DBManager.init(this);
         JumpDataManager.init();
 

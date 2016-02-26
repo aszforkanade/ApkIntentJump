@@ -70,9 +70,7 @@ public class ParamListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = mLayoutInflater.inflate(R.layout.param_list_item,null);
-        }
+        convertView = mLayoutInflater.inflate(R.layout.param_list_item,null);
         JumpParam param = (JumpParam) getItem(position);
         TextView tv = (TextView) convertView.findViewById(R.id.paramName);
         tv.setText(String.format("name:%s",param.getKey()));
@@ -88,11 +86,11 @@ public class ParamListAdapter extends BaseAdapter {
         StringBuilder stringBuilder = new StringBuilder();
         boolean isFirst = true;
         for (String string : mValues.keySet()) {
-            if (!isFirst) {
-                stringBuilder.append("?");
-            }
             if (TextUtils.isEmpty(mValues.get(string))) {
                 continue;
+            }
+            if (!isFirst) {
+                stringBuilder.append("&");
             }
             isFirst = false;
             stringBuilder.append(string).append("=").append(mValues.get(string));

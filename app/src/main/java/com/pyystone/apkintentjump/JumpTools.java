@@ -15,6 +15,7 @@ import com.pyystone.apkintentjump.data.JumpScheme;
  */
 public class JumpTools {
 
+    public static final int JUMP_REQUEST_CODE = 99;
     public static boolean isVaildScheme(Context context, JumpScheme scheme) {
         Uri uri = Uri.parse(scheme.getScheme() + "://test");
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -28,6 +29,7 @@ public class JumpTools {
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         intent.setData(Uri.parse(url));
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent,JUMP_REQUEST_CODE);
+        AppTools.getInstance().toast("Succeed");
     }
 }

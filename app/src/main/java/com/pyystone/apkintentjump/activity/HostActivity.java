@@ -1,5 +1,6 @@
 package com.pyystone.apkintentjump.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.pyystone.apkintentjump.AppTools;
 import com.pyystone.apkintentjump.JumpTools;
 import com.pyystone.apkintentjump.R;
 import com.pyystone.apkintentjump.data.JumpHost;
@@ -29,7 +31,7 @@ public class HostActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host);
         initData();
-        if (mJumpHost == null || TextUtils.isEmpty(mBaseUrl)) {
+        if (mJumpHost == null || TextUtils.isEmpty(mBaseUrl) || mJumpHost.getParams().size() == 0) {
             finish();
             return;
         }
@@ -76,5 +78,11 @@ public class HostActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             mTvUrl.setText(String.format("%s?%s", mBaseUrl, url));
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        AppTools.getInstance().toast("result:" + (resultCode == RESULT_OK ? "OK" : "CANCEL"));
     }
 }

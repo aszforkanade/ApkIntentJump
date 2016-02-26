@@ -118,10 +118,10 @@ public class JumpHost extends JumpData{
         ArrayList<JumpHost> hosts = new ArrayList<>();
         Cursor c = DBManager.getInstance().rawQuery(
                 "select * from " + DB_TBL_HOST
-                        + " where " + DB_TAG_HOST_PARENTID + " = " + schemeUuid + " and "  + DB_TAG_BASE_ISDELETE + " = 0");
+                        + " where " + DB_TAG_HOST_PARENTID + " = " + schemeUuid + " and "  + DB_TAG_BASE_ISDELETE + " = 0 order by uuid asc");
         try {
             if (c == null || !c.moveToFirst()) {
-                return null;
+                return hosts;
             }
             int idIndex = c.getColumnIndex(DB_TAG_BASE_ID);
             do {

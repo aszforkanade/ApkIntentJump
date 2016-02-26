@@ -95,7 +95,7 @@ public class JumpScheme extends JumpData {
 
     public static ArrayList<JumpScheme> loadAllScheme() {
         ArrayList<JumpScheme> schemes = new ArrayList<>();
-        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_SCHEME + " where " + DB_TAG_BASE_ISDELETE + " = 0");
+        Cursor c = DBManager.getInstance().rawQuery("select * from " + DB_TBL_SCHEME + " where " + DB_TAG_BASE_ISDELETE + " = 0 order by uuid asc");
         try {
             if (c == null || !c.moveToFirst()) {
                 return null;

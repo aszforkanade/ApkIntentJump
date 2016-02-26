@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.pyystone.apkintentjump.AppTools;
 import com.pyystone.apkintentjump.JumpTools;
 import com.pyystone.apkintentjump.R;
 import com.pyystone.apkintentjump.data.JumpDataManager;
@@ -18,7 +19,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ListView mListView;
     private SchemeListAdapter mAdapter;
-    private Toast mToast;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btnUpdate) {
+            AppTools.getInstance().toast("start update");
             JumpDataManager.getInstance().refreshData(this, new JumpDataManager.refreshCallBack() {
                 @Override
                 public void finish(final boolean isSucceed) {
@@ -56,21 +57,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 mAdapter = new SchemeListAdapter(MainActivity.this, JumpDataManager.getInstance().getSchemes());
                                 mListView.setAdapter(mAdapter);
                             }
-                            showToast(isSucceed? "update succeed":"update failure");
+                            AppTools.getInstance().toast(isSucceed? "update succeed":"update failure");
                         }
                     });
                 }
             });
         }
-    }
-
-    private void showToast(String message) {
-        if (mToast == null) {
-            mToast = Toast.makeText(this,message,Toast.LENGTH_SHORT);
-        } else {
-            mToast.setText(message);
-        }
-        mToast.show();
     }
 
     @Override
@@ -81,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra(SchemeActivity.EXTRA_SCHEME_ID,scheme.getUuid());
             startActivity(intent);
         } else {
-            showToast(getString(R.string.ivaildSchemeError));
+            AppTools.getInstance().toast(getString(R.string.ivaildSchemeError));
         }
     }
 

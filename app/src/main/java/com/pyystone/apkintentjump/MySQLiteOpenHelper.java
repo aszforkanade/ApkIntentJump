@@ -44,9 +44,9 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
     // 数据库创建的时候需要的跑的sql
     private void generateDB(SQLiteDatabase db) {
-        db.execSQL("create table tbl_scheme(id INTEGER PRIMARY KEY autoincrement, uuid varchar(30),isdelete INTEGER DEFAULT 0,scheme varchar(30),schemedes varchar(200))");
-        db.execSQL("create table tbl_host(id INTEGER PRIMARY KEY autoincrement, uuid varchar(30),isdelete INTEGER DEFAULT 0,parentid INTEGER ,host varchar(30),hostdes varchar(200))");
-        db.execSQL("create table tbl_param(id INTEGER PRIMARY KEY autoincrement, uuid varchar(30),isdelete INTEGER DEFAULT 0,sourceid INTEGER,key varchar(30),defaultvalue varchar(30),keydes varchar(200))");
+        db.execSQL("create table tbl_scheme(id INTEGER PRIMARY KEY autoincrement, uuid INTEGER,isdelete INTEGER DEFAULT 0,scheme varchar(30),schemedes varchar(200))");
+        db.execSQL("create table tbl_host(id INTEGER PRIMARY KEY autoincrement, uuid INTEGER,isdelete INTEGER DEFAULT 0,parentid INTEGER ,host varchar(30),hostdes varchar(200))");
+        db.execSQL("create table tbl_param(id INTEGER PRIMARY KEY autoincrement, uuid INTEGER,isdelete INTEGER DEFAULT 0,sourceid INTEGER,key varchar(30),defaultvalue varchar(30),keydes varchar(200))");
         generateDBData(db);
     }
 

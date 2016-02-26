@@ -112,11 +112,11 @@ public class JumpParam extends JumpData {
     public static ArrayList<JumpParam> loadParamByHostUuid(int hostUuid) {
         ArrayList<JumpParam> params = new ArrayList<>();
         Cursor c = DBManager.getInstance().rawQuery(
-                "select * from " + JumpHost.DB_TBL_HOST
-                        + " where " + JumpHost.DB_TAG_HOST_PARENTID + " = " + hostUuid + " and "  + DB_TAG_BASE_ISDELETE + " = 0");
+                "select * from " + DB_TBL_PARAM
+                        + " where " + DB_TAG_PARAM_SOURCEID + " = " + hostUuid + " and "  + DB_TAG_BASE_ISDELETE + " = 0 order by uuid asc");
         try {
             if (c == null || !c.moveToFirst()) {
-                return null;
+                return params;
             }
             int idIndex = c.getColumnIndex(DB_TAG_BASE_ID);
             do {

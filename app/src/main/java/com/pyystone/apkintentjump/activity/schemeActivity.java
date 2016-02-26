@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.pyystone.apkintentjump.AppTools;
+import com.pyystone.apkintentjump.JumpTools;
 import com.pyystone.apkintentjump.R;
 import com.pyystone.apkintentjump.data.JumpHost;
 import com.pyystone.apkintentjump.data.JumpScheme;
@@ -16,6 +18,7 @@ public class SchemeActivity extends AppCompatActivity implements AdapterView.OnI
     public static final String EXTRA_SCHEME_ID = "extra_scheme_uuid";
 
     private int mSchemeid;
+    private JumpScheme mScheme;
     private ListView mListView;
     private HostListAdapter mHostListAdapter;
     @Override
@@ -31,9 +34,9 @@ public class SchemeActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void initUI() {
-        JumpScheme scheme = JumpScheme.load(mSchemeid);
+        mScheme = JumpScheme.load(mSchemeid);
         mListView = (ListView) findViewById(R.id.listView);
-        mHostListAdapter = new HostListAdapter(this,scheme);
+        mHostListAdapter = new HostListAdapter(this,mScheme);
         mListView.setAdapter(mHostListAdapter);
         initListener();
     }
@@ -45,8 +48,18 @@ public class SchemeActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         JumpHost host = (JumpHost) mHostListAdapter.getItem(position);
-        Intent intent = new Intent(this,HostActivity.class);
-        intent.putExtra(HostActivity.EXTRA_HOST_ID,host.getId());
-        startActivity(intent);
+        if (host.getParams().size() > 0) {
+            Intent intent = new Intent(this, HostActivity.class);
+            intent.putExtra(HostActivity.EXTRA_HOST_ID, host.getId());
+            startActivity(intent);
+        } else {
+            JumpTools.urlJump(this,mScheme.getScheme() + "://" + host.getHost());
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        AppTools.getInstance().toast("result:" + (resultCode == RESULT_OK ? "OK" : "CANCEL"));
     }
 }
